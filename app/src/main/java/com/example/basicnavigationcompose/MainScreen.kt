@@ -20,8 +20,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun MainScreen(
-    onContinue: () -> Unit,
-    modifier: Modifier = Modifier
+    onContinue: (String) -> Unit, modifier: Modifier = Modifier
 ) {
 
     // For TextField's onValueChange
@@ -38,7 +37,9 @@ fun MainScreen(
             text = it
         }, modifier.padding(8.dp))
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onContinue) {
+        Button(onClick = {
+            onContinue(text)
+        }) {
             Text(text = "Continue")
         }
     }

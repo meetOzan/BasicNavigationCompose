@@ -39,25 +39,42 @@ fun MyApp() {
 }
 
 // NavHost
-
 // In that code I can change screens with Navigation without Args.
 @Composable
 fun BasicNavHost(navController: NavHostController) {
     androidx.navigation.compose.NavHost(
         navController = navController, startDestination = Main.route
     ) {
+
         composable(Main.route) {
-            MainScreen({ navController.navigateSingleTopTo(Welcome.route) })
+            MainScreen(onContinue = {
+                // It's for throw args to WelcomeScreen
+                // navController.navigateWelcome("${Welcome.route}/$it")
+
+                navController.navigateToWelcome(it)
+            })
         }
-        composable(Welcome.route) {
+
+        composable(
+            route = Welcome.routeWithArgs, arguments = Welcome.args
+        ) { navStackEntry ->
+
+            // argKey is for, use in WelcomeScreen's name param.
+            val argKey = navStackEntry.arguments?.getString(Welcome.argsKey)
+
             WelcomeScreen(
-                onGoBack = { navController.navigateSingleTopTo(Main.route) },
-                name = "Selim 2"
+                onGoBack = { navController.navigateWelcome(Main.route) },
+                name = argKey.toString()
             )
         }
     }
 }
 
 // infix navigate function for to use "launchSingleTop = true"
-fun NavHostController.navigateSingleTopTo(route: String) =
+fun NavHostController.navigateWelcome(route: String) =
     this.navigate(route) { launchSingleTop = true }
+
+// It's a ready func for navigate WelcomeScreen with args
+private fun NavHostController.navigateToWelcome(name: String) {
+    this.navigateWelcome("${Welcome.route}/$name")
+}
